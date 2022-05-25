@@ -3,6 +3,10 @@ import os
 
 
 def get_orders():
+    """
+    Return JSON list with info about ALL orders
+    :return:
+    """
     return requests.get('https://fornex.com/api/orders/list', {
         'apikey': os.getenv('API_FORNEX_TOKEN')
     }).json()

@@ -30,7 +30,7 @@ async def main():
     if os.path.exists(dotenv_path):
         load_dotenv(dotenv_path)
 
-    logger.info('Starting R3 bot')
+    logger.info('Starting Monitoring bot')
     bot = Bot(token=os.getenv('API_BOT_TOKEN'))
     dp = Dispatcher(bot, storage=MemoryStorage())
 

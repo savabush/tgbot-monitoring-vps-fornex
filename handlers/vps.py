@@ -7,6 +7,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from api.orders import get_orders, get_order_id, get_order_names_or_traffics, get_order_info
 from api.restart_vps_api import restart_vps_api
 from api.status_vps_api import get_status_info
+from api.on_off_vps_api import turn_on_vps_api, turn_off_vps_api
 
 
 class NameVPS(StatesGroup):
@@ -58,8 +59,30 @@ async def status_vps(msg: types.Message, state:FSMContext):
         await msg.answer('VPS выключен')
 
 
+async def turn_on_vps(msg: types.Message, state: FSMContext):
+    name = await state.get_data()
+    order_id = get_order_id(name['name'])
+    result = turn_on_vps_api(order_id)
+    if result == 200:
+        await msg.answer('VPS включен')
+    else:
+        await msg.answer('Ошибка, проверьте ваш заказ')
+
+
+async def turn_off_vps(msg: types.Message, state: FSMContext):
+    name = await state.get_data()
+    order_id = get_order_id(name['name'])
+    result = turn_off_vps_api(order_id)
+    if result == 200:
+        await msg.answer('VPS выключен')
+    else:
+        await msg.answer('Ошибка, проверьте ваш заказ')
+
+
 def register_handler_vps(dp: Dispatcher):
     dp.register_message_handler(vps, lambda msg: msg.text == 'VPS')
     dp.register_message_handler(order_get, lambda msg: msg.text in get_order_names_or_traffics(), state='*')
     dp.register_message_handler(restart_vps, lambda msg: msg.text == 'Рестарт', state='*')
     dp.register_message_handler(status_vps, lambda msg: msg.text == 'Статус', state='*')
+    dp.register_message_handler(turn_on_vps, lambda msg: msg.text == 'Включить', state='*')
+    dp.register_message_handler(turn_off_vps, lambda msg: msg.text == 'Выключить', state='*')
