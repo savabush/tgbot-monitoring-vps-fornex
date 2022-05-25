@@ -4,7 +4,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
 # Api
-from api.orders import get_orders, get_order_id, get_order_names_or_traffics
+from api.orders import get_orders, get_order_id, get_order_names_or_traffics, get_order_info
 from api.restart_vps_api import restart_vps_api
 
 
@@ -26,9 +26,14 @@ async def vps(msg: types.Message):
 
 async def order_get(msg: types.Message, state: FSMContext):
     await state.update_data(name=msg.text)
+
+    name = await state.get_data()
+    current_order_info = get_order_info(name)
+
     keyboard = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
     buttons = ['Рестарт', 'Включить', 'Выключить', 'Статус', 'Меню']
     keyboard.add(*buttons)
+    await msg.answer(current_order_info)
     await msg.answer('Выберите опцию:', reply_markup=keyboard)
 
 
