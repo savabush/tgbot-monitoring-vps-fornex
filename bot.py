@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 # Init and backend
 import os
 from aiogram import Dispatcher, Bot
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 # Handlers
 from handlers.base import register_handler_base
@@ -31,7 +32,7 @@ async def main():
 
     logger.info('Starting R3 bot')
     bot = Bot(token=os.getenv('API_BOT_TOKEN'))
-    dp = Dispatcher(bot)
+    dp = Dispatcher(bot, storage=MemoryStorage())
 
     logger.info('Register handlers')
     register_handler_base(dp)

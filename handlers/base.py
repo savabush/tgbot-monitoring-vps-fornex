@@ -1,8 +1,10 @@
 from aiogram import types, Dispatcher
+from aiogram.dispatcher import FSMContext
 import aiogram.utils.markdown as fmt
 
 
-async def cmd_start(msg: types.Message):
+async def cmd_start(msg: types.Message, state: FSMContext):
+    await state.finish()
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     buttons = ['VPS', 'Баланс', 'О боте']
     keyboard.add(*buttons)
@@ -17,5 +19,5 @@ async def about(msg: types.Message):
 
 
 def register_handler_base(dp: Dispatcher):
-    dp.register_message_handler(cmd_start, lambda msg: msg.text == 'Меню' or msg.text == '/start')
+    dp.register_message_handler(cmd_start, lambda msg: msg.text == 'Меню' or msg.text == '/start', state='*')
     dp.register_message_handler(about, lambda msg: msg.text == 'О боте')
