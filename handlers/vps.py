@@ -6,6 +6,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 # Api
 from api.orders import get_orders, get_order_id, get_order_names_or_traffics, get_order_info
 from api.restart_vps_api import restart_vps_api
+from api.status_vps_api import get_status_info
 
 
 class NameVPS(StatesGroup):
@@ -47,7 +48,18 @@ async def restart_vps(msg: types.Message, state: FSMContext):
         await msg.answer('Ошибка, проверьте ваш заказ')
 
 
+async def status_vps(msg: types.Message, state:FSMContext):
+    name = await state.get_data()
+    order_id = get_order_id(name['name'])
+    result = get_status_info(order_id)
+    if result['status'] == 'on':
+        await msg.answer('VPS работает')
+    else:
+        await msg.answer('VPS выключен')
+
+
 def register_handler_vps(dp: Dispatcher):
     dp.register_message_handler(vps, lambda msg: msg.text == 'VPS')
     dp.register_message_handler(order_get, lambda msg: msg.text in get_order_names_or_traffics(), state='*')
     dp.register_message_handler(restart_vps, lambda msg: msg.text == 'Рестарт', state='*')
+    dp.register_message_handler(status_vps, lambda msg: msg.text == 'Статус', state='*')
